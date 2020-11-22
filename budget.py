@@ -56,20 +56,41 @@ class Category:
         else:
             return int((withdrawals / deposits ) * 100)
 
-def generate_histogram(categories,cat_perc_spend):
+def generate_histogram(self,cat_perc_spend):
     lines = str()
+
+    lines = "Percentage spent by category"
     for step in range(100,-10,-10):
+        lines = lines + "\n"
         lines = lines + str(step).rjust(3," ") + "| "
-        for category in categories:
-            if cat_perc_spend[category.name] >= step: lines = lines + "o "
-            else: "  "
-        lines = lines + " \n"
+        for category in self:
+            if cat_perc_spend[category.name] >= step: 
+                lines = lines + "o  "
+            else:
+                lines = lines + "   "
+    lines = lines + "\n    " + "---" * len(self) + "-"
     return lines
 
-def create_spend_chart(categories):
+def generate_labels(self,lines):
+ 
+    max_label_size = max(len(category.name) for category in self)
+    for l in range(0, max_label_size):
+        lines = lines + "\n    "
+
+        for o in range (len(self)):
+            if len(self[o].name) > l:
+                lines = lines + " " + self[o].name[l] + " "
+            else:
+                lines = lines + "   "
+        lines = lines + " "
+    return lines
+
+def create_spend_chart(self):
     cat_perc_spend = dict()
-    for category in categories:
+    
+    for category in self:
         cat_perc_spend[category.name] = category.perc_spend()
     
-    above_axis = generate_histogram(categories,cat_perc_spend)
-    print(above_axis)
+    above_axis = generate_histogram(self,cat_perc_spend)
+    chart = generate_labels(self,above_axis)
+    return chart
